@@ -532,55 +532,44 @@ do
     function library:notification(message, duration, color)
         local notification = {}
         notification.objects = library:create('notification')
-    
         if color then
             notification.objects.accent.Theme = {}
             notification.objects.accent.Color = color
             notification.objects.progress.Theme = {}
             notification.objects.progress.Color = color
         end
-    
         function notification:set_message(message)
             self.objects.label.Text = message
             self.objects.background.Size = udim2_new(0, self.objects.label.TextBounds.X + 14, 0, 17)
         end
-    
         function notification:remove()
             table_remove(library.notifs, table_find(library.notifs, notification))
             library:update_notifications()
             self.objects.container:Remove()
         end
     
-        -- Insert the notification into the list first so we can position it
         table_insert(library.notifs, notification)
         local index = table_find(library.notifs, notification)
         
-        -- Define positions:
-        -- onScreenPos: notification is visible at the left side (x offset 5)
-        -- offScreenPos: notification is off-screen to the right (x scale = 1)
         local onScreenPos = udim2_new(0, 5, 0, 100 + (index * 25))
         local offScreenPos = udim2_new(1, 5, 0, 100 + (index * 25))
         
-        -- Set initial position off-screen to the right
         notification.objects.container.Position = offScreenPos
-    
+        
         notification:set_message(message)
+        
+        notification.objects.container.Visible = true
+        
         library:update_notifications()
-    
-        -- Animate the notification: slide in, show progress, slide out, then remove.
+        
         task.spawn(function()
-            -- Slide in (0.15 sec)
             utility:tween(notification.objects.container, 'Position', onScreenPos, 0.15).Completed:Wait()
-            -- Animate progress bar for the given duration (default 5 sec)
             utility:tween(notification.objects.progress, 'Size', udim2_new(1, 0, 0, 1), duration or 5).Completed:Wait()
-            -- Slide out to the right (0.15 sec)
             utility:tween(notification.objects.container, 'Position', offScreenPos, 0.15).Completed:Wait()
             notification:remove()
         end)
-    
         return notification
     end
-    
 
     -- configs
     function library:load_config(config)
