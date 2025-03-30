@@ -2433,8 +2433,7 @@ do
         }
     end)
 
-    -- menu
-    -- menu
+-- menu
 library:define('menu', function(meta, properties)
     local menu = setmetatable({}, meta)
     properties     = properties or {}
@@ -2446,6 +2445,7 @@ library:define('menu', function(meta, properties)
     menu.objects   = {}
     menu.tabs      = {}
 
+    -- Main background for the menu
     menu.objects.background = library:create('rect', {
         Theme    = {['Color'] = 'Background'},
         Visible  = true,
@@ -2453,9 +2453,19 @@ library:define('menu', function(meta, properties)
         Position = menu.position
     })
 
+    -- Create a drag interaction overlay that covers the entire background.
+    menu.objects.drag_interaction = library:create('rect', {
+        Size = udim2_new(1, 0, 1, 0),
+        Active = true,
+        Thickness = 1,
+        ZIndex = 100, -- Ensure it's on top
+        Transparency = 0,
+        Parent = menu.objects.background
+    })
+
     menu.objects.title = library:create('text', {
         Theme    = {['Color'] = 'Primary Text'},
-        Position = udim2_new(0.5,0,0,-18),
+        Position = udim2_new(0.5, 0, 0, -18),
         Center   = true,
         Outline  = true,
         Text     = menu.text,
@@ -2464,33 +2474,33 @@ library:define('menu', function(meta, properties)
 
     menu.objects.group_background = library:create('rect', {
         Theme       = {['Color'] = 'Group Background'},
-        Size        = udim2_new(1,-20,1,-57),
-        Position    = udim2_new(0.5,0,1,-10),
-        AnchorPoint = vector2_new(0.5,1),
+        Size        = udim2_new(1, -20, 1, -57),
+        Position    = udim2_new(0.5, 0, 1, -10),
+        AnchorPoint = vector2_new(0.5, 1),
         ZIndex      = 3,
         Parent      = menu.objects.background,
     })
 
     menu.objects.tab_container = library:create('rect', {
-        Size = udim2_new(1,0,0,27),
-        Position = udim2_new(0,0,0,-10),
-        AnchorPoint = vector2_new(0,1),
+        Size = udim2_new(1, 0, 0, 27),
+        Position = udim2_new(0, 0, 0, -10),
+        AnchorPoint = vector2_new(0, 1),
         Transparency = 0,
         Parent = menu.objects.group_background
     })
 
     menu.objects.section_container_1 = library:create('rect', {
-        Size = udim2_new(0.485,-8,1,-20),
-        Position = udim2_new(0,10,0,10),
+        Size = udim2_new(0.485, -8, 1, -20),
+        Position = udim2_new(0, 10, 0, 10),
         Parent = menu.objects.group_background,
         Transparency = 0,
         ZIndex = 5,
     })
 
     menu.objects.section_container_2 = library:create('rect', {
-        Size = udim2_new(0.485,-8,1,-20),
-        Position = udim2_new(1,-10,0,10),
-        AnchorPoint = vector2_new(1,0,0,0),
+        Size = udim2_new(0.485, -8, 1, -20),
+        Position = udim2_new(1, -10, 0, 10),
+        AnchorPoint = vector2_new(1, 0, 0, 0),
         Parent = menu.objects.group_background,
         Transparency = 0,
         ZIndex = 5,
@@ -2504,23 +2514,15 @@ library:define('menu', function(meta, properties)
     menu.objects.outline_outer_1 = library:create('outline', menu.objects.outline_middle,   {Theme = {['Color'] = 'Accent'}})
     menu.objects.outline_outer_2 = library:create('outline', menu.objects.outline_outer_1,  {Theme = {['Color'] = 'Border 1'}})
 
-    menu.objects.drag_interaction = library:create('rect', {
-        Size = udim2_new(1,0,1,0),
-        Active = true,
-        Thickness = 1,
-        ZIndex = 3,
-        Transparency = 0,
-        Parent = menu.objects.outline_outer_2
-    })
-
     menu.objects.drag_fade = library:create('rect', {
-        Size = udim2_new(1,0,1,0),
+        Size = udim2_new(1, 0, 1, 0),
         Thickness = 1,
-        ZIndex = 100,
+        ZIndex = 101,
         Transparency = 0,
-        Parent = menu.objects.outline_outer_2
+        Parent = menu.objects.background
     })
 
+    -- Attach the drag functionality to the entire background.
     library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
         if menu.dragging then
             return
@@ -2532,23 +2534,23 @@ library:define('menu', function(meta, properties)
         local drag_position = mouse_position_start - start_relative_pos
 
         local drag_object = library:create('rect', {
-            Size = udim2_offset(menu.objects.outline_outer_2.AbsoluteSize.X, menu.objects.outline_outer_2.AbsoluteSize.Y),
-            Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23),
+            Size = udim2_offset(menu.objects.background.AbsoluteSize.X, menu.objects.background.AbsoluteSize.Y),
+            Position = udim2_offset(drag_position.X, drag_position.Y),
             Color = color3_new(1,1,1),
             Filled = false,
             Thickness = 1,
             Transparency = 0,
-            ZIndex = 100,
+            ZIndex = 150,
         })
 
         local inputchanged; inputchanged = library:connection(inputservice.InputChanged, function(input)
             if input.UserInputType == Enum.UserInputType.MouseMovement then
                 local position = inputservice:GetMouseLocation() - start_relative_pos
                 drag_position = vector2_new(
-                    math_clamp(position.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X),
-                    math_clamp(position.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y)
+                    math_clamp(position.X, 0, camera.ViewportSize.X - menu.objects.background.AbsoluteSize.X),
+                    math_clamp(position.Y, 0, camera.ViewportSize.Y - menu.objects.background.AbsoluteSize.Y)
                 )
-                drag_object.Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23)
+                drag_object.Position = udim2_offset(drag_position.X, drag_position.Y)
             end
         end)
 
@@ -2562,7 +2564,6 @@ library:define('menu', function(meta, properties)
                 utility:tween(drag_object, 'Transparency', 0, 0.075).Completed:Wait()
                 drag_object:Remove()
                 menu.dragging = false
-
             end
         end)
 
@@ -2641,6 +2642,7 @@ end, {
         end
     end
 }, true)
+
 
 
     -- tab
