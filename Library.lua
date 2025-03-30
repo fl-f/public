@@ -2519,7 +2519,7 @@ do
             Transparency = 0,
             Parent = menu.objects.outline_outer_2
         })
-        print("yeah")
+        print("文鍵盤/中文键盘")
         library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
             if menu.dragging then
                 return
@@ -2528,16 +2528,6 @@ do
             local drag_position_start = menu.objects.background.AbsolutePosition
             local mouse_position_start = inputservice:GetMouseLocation()
             local start_relative_pos = mouse_position_start - drag_position_start
-        
-            local drag_object = library:create('rect', {
-                Size = udim2_offset(menu.objects.outline_outer_2.AbsoluteSize.X, menu.objects.outline_outer_2.AbsoluteSize.Y),
-                Position = udim2_offset(drag_position_start.X - 9, drag_position_start.Y - 23),
-                Color = color3_new(1,1,1),
-                Filled = false,
-                Thickness = 1,
-                Transparency = 0,
-                ZIndex = 100,
-            })
         
             menu.dragging = true
         
@@ -2549,9 +2539,6 @@ do
                         math_clamp(newDragPosition.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X),
                         math_clamp(newDragPosition.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y)
                     )
-                    -- Update drag outline position
-                    drag_object.Position = udim2_offset(newDragPosition.X - 9, newDragPosition.Y - 23)
-                    -- Update actual menu position for visual feedback
                     menu.objects.background.Position = udim2_offset(newDragPosition.X, newDragPosition.Y)
                 end
             end)
@@ -2561,16 +2548,13 @@ do
                     inputchanged:Disconnect()
                     inputended:Disconnect()
         
-                    utility:tween(menu.objects.drag_fade, 'Transparency', 0, 0.075)
-                    utility:tween(drag_object, 'Transparency', 0, 0.075).Completed:Wait()
-                    drag_object:Remove()
+                    -- Final tween for smooth landing on release, if desired.
+                    utility:tween(menu.objects.background, 'Position', menu.objects.background.Position, 0.15, Enum.EasingStyle.Quad)
                     menu.dragging = false
                 end
             end)
-        
-            utility:tween(drag_object, 'Transparency', 1, 0.075)
-            utility:tween(menu.objects.drag_fade, 'Transparency', 0.2, 0.075).Completed:Wait()
         end)
+        
         
 
         return menu
