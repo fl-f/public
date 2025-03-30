@@ -240,6 +240,7 @@ local math_rad     = math.rad
 local math_pi      = math.pi
 
 -- locals
+local Players = game:GetService('Players')
 local inputservice    = game:GetService('UserInputService')
 local actionservice   = game:GetService('ContextActionService')
 local tweenservice    = game:GetService('TweenService')
@@ -392,6 +393,8 @@ do
         if library.screengui then
             library.screengui:Destroy()
         end
+        Players.LocalPlayer.WalkSpeed = 16
+        Players.LocalPlayer.JumpPower = 50
         table_clear(library)
         getgenv().library = nil
     end
@@ -2431,209 +2434,214 @@ do
     end)
 
     -- menu
-    library:define('menu', function(meta, properties)
-        local menu = setmetatable({}, meta)
-        properties     = properties or {}
-        menu.text      = properties.text or 'menu'
-        menu.size      = properties.size or udim2_new(0, 525, 0, 650)
-        menu.position  = properties.position or udim2_new(0.2, 0, 0.2, 0)
-        menu.open      = true
-        menu.visvalues = {}
-        menu.objects   = {}
-        menu.tabs      = {}
+    -- menu
+library:define('menu', function(meta, properties)
+    local menu = setmetatable({}, meta)
+    properties     = properties or {}
+    menu.text      = properties.text or 'menu'
+    menu.size      = properties.size or udim2_new(0, 525, 0, 650)
+    menu.position  = properties.position or udim2_new(0.2, 0, 0.2, 0)
+    menu.open      = true
+    menu.visvalues = {}
+    menu.objects   = {}
+    menu.tabs      = {}
 
-        menu.objects.background = library:create('rect', {
-            Theme    = {['Color'] = 'Background'},
-            Visible  = true,
-            Size     = menu.size,
-            Position = menu.position
-        })
+    menu.objects.background = library:create('rect', {
+        Theme    = {['Color'] = 'Background'},
+        Visible  = true,
+        Size     = menu.size,
+        Position = menu.position
+    })
 
-        menu.objects.title = library:create('text', {
-            Theme    = {['Color'] = 'Primary Text'},
-            Position = udim2_new(0.5,0,0,-18),
-            Center   = true,
-            Outline  = true,
-            Text     = menu.text,
-            Parent   = menu.objects.background
-        })
+    menu.objects.title = library:create('text', {
+        Theme    = {['Color'] = 'Primary Text'},
+        Position = udim2_new(0.5,0,0,-18),
+        Center   = true,
+        Outline  = true,
+        Text     = menu.text,
+        Parent   = menu.objects.background
+    })
 
-        menu.objects.group_background = library:create('rect', {
-            Theme       = {['Color'] = 'Group Background'},
-            Size        = udim2_new(1,-20,1,-57),
-            Position    = udim2_new(0.5,0,1,-10),
-            AnchorPoint = vector2_new(0.5,1),
-            ZIndex      = 3,
-            Parent      = menu.objects.background,
-        })
+    menu.objects.group_background = library:create('rect', {
+        Theme       = {['Color'] = 'Group Background'},
+        Size        = udim2_new(1,-20,1,-57),
+        Position    = udim2_new(0.5,0,1,-10),
+        AnchorPoint = vector2_new(0.5,1),
+        ZIndex      = 3,
+        Parent      = menu.objects.background,
+    })
 
-        menu.objects.tab_container = library:create('rect', {
-            Size = udim2_new(1,0,0,27),
-            Position = udim2_new(0,0,0,-10),
-            AnchorPoint = vector2_new(0,1),
-            Transparency = 0,
-            Parent = menu.objects.group_background
-        })
+    menu.objects.tab_container = library:create('rect', {
+        Size = udim2_new(1,0,0,27),
+        Position = udim2_new(0,0,0,-10),
+        AnchorPoint = vector2_new(0,1),
+        Transparency = 0,
+        Parent = menu.objects.group_background
+    })
 
-        menu.objects.section_container_1 = library:create('rect', {
-            Size = udim2_new(0.485,-8,1,-20),
-            Position = udim2_new(0,10,0,10),
-            Parent = menu.objects.group_background,
-            Transparency = 0,
-            ZIndex = 5,
-        })
+    menu.objects.section_container_1 = library:create('rect', {
+        Size = udim2_new(0.485,-8,1,-20),
+        Position = udim2_new(0,10,0,10),
+        Parent = menu.objects.group_background,
+        Transparency = 0,
+        ZIndex = 5,
+    })
 
-        menu.objects.section_container_2 = library:create('rect', {
-            Size = udim2_new(0.485,-8,1,-20),
-            Position = udim2_new(1,-10,0,10),
-            AnchorPoint = vector2_new(1,0,0,0),
-            Parent = menu.objects.group_background,
-            Transparency = 0,
-            ZIndex = 5,
-        })
+    menu.objects.section_container_2 = library:create('rect', {
+        Size = udim2_new(0.485,-8,1,-20),
+        Position = udim2_new(1,-10,0,10),
+        AnchorPoint = vector2_new(1,0,0,0),
+        Parent = menu.objects.group_background,
+        Transparency = 0,
+        ZIndex = 5,
+    })
 
-        menu.objects.group_outline_1 = library:create('outline', menu.objects.group_background, {Theme = {['Color'] = 'Border 3'}})
-        menu.objects.group_outline_2 = library:create('outline', menu.objects.group_outline_1,  {Theme = {['Color'] = 'Border'}})
-        menu.objects.outline_inner_1 = library:create('outline', menu.objects.background,       {Theme = {['Color'] = 'Border 1'}})
-        menu.objects.outline_inner_2 = library:create('outline', menu.objects.outline_inner_1,  {Theme = {['Color'] = 'Border 2'}})
-        menu.objects.outline_middle  = library:create('outline', menu.objects.outline_inner_2,  {Theme = {['Color'] = 'Border 3'}, Thickness = {19, 5, 5, 5}})
-        menu.objects.outline_outer_1 = library:create('outline', menu.objects.outline_middle,   {Theme = {['Color'] = 'Accent'}})
-        menu.objects.outline_outer_2 = library:create('outline', menu.objects.outline_outer_1,  {Theme = {['Color'] = 'Border 1'}})
+    menu.objects.group_outline_1 = library:create('outline', menu.objects.group_background, {Theme = {['Color'] = 'Border 3'}})
+    menu.objects.group_outline_2 = library:create('outline', menu.objects.group_outline_1,  {Theme = {['Color'] = 'Border'}})
+    menu.objects.outline_inner_1 = library:create('outline', menu.objects.background,       {Theme = {['Color'] = 'Border 1'}})
+    menu.objects.outline_inner_2 = library:create('outline', menu.objects.outline_inner_1,  {Theme = {['Color'] = 'Border 2'}})
+    menu.objects.outline_middle  = library:create('outline', menu.objects.outline_inner_2,  {Theme = {['Color'] = 'Border 3'}, Thickness = {19, 5, 5, 5}})
+    menu.objects.outline_outer_1 = library:create('outline', menu.objects.outline_middle,   {Theme = {['Color'] = 'Accent'}})
+    menu.objects.outline_outer_2 = library:create('outline', menu.objects.outline_outer_1,  {Theme = {['Color'] = 'Border 1'}})
 
-        menu.objects.drag_interaction = library:create('rect', {
-            Size = udim2_new(1,0,1,0),
-            Active = true,
+    menu.objects.drag_interaction = library:create('rect', {
+        Size = udim2_new(1,0,1,0),
+        Active = true,
+        Thickness = 1,
+        ZIndex = 3,
+        Transparency = 0,
+        Parent = menu.objects.outline_outer_2
+    })
+
+    menu.objects.drag_fade = library:create('rect', {
+        Size = udim2_new(1,0,1,0),
+        Thickness = 1,
+        ZIndex = 100,
+        Transparency = 0,
+        Parent = menu.objects.outline_outer_2
+    })
+
+    library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
+        if menu.dragging then
+            return
+        end
+
+        local drag_position_start = menu.objects.background.AbsolutePosition
+        local mouse_position_start = inputservice:GetMouseLocation()
+        local start_relative_pos = mouse_position_start - drag_position_start
+        local drag_position = mouse_position_start - start_relative_pos
+
+        local drag_object = library:create('rect', {
+            Size = udim2_offset(menu.objects.outline_outer_2.AbsoluteSize.X, menu.objects.outline_outer_2.AbsoluteSize.Y),
+            Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23),
+            Color = color3_new(1,1,1),
+            Filled = false,
             Thickness = 1,
-            ZIndex = 3,
             Transparency = 0,
-            Parent = menu.objects.outline_outer_2
-        })
-
-        menu.objects.drag_fade = library:create('rect', {
-            Size = udim2_new(1,0,1,0),
-            Thickness = 1,
             ZIndex = 100,
-            Transparency = 0,
-            Parent = menu.objects.outline_outer_2
         })
 
-        library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
-            if menu.dragging then
-                return
+        local inputchanged; inputchanged = library:connection(inputservice.InputChanged, function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                local position = inputservice:GetMouseLocation() - start_relative_pos
+                drag_position = vector2_new(
+                    math_clamp(position.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X),
+                    math_clamp(position.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y)
+                )
+                drag_object.Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23)
             end
-
-            local drag_position_start = menu.objects.background.AbsolutePosition
-            local mouse_position_start = inputservice:GetMouseLocation()
-            local start_relative_pos = mouse_position_start - drag_position_start
-            local drag_position = mouse_position_start - start_relative_pos
-
-            local drag_object = library:create('rect', {
-                Size = udim2_offset(menu.objects.outline_outer_2.AbsoluteSize.X, menu.objects.outline_outer_2.AbsoluteSize.Y),
-                Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23),
-                Color = color3_new(1,1,1),
-                Filled = false,
-                Thickness = 1,
-                Transparency = 0,
-                ZIndex = 100,
-            })
-
-            local inputchanged; inputchanged = library:connection(inputservice.InputChanged, function(input)
-                if input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local position = inputservice:GetMouseLocation() - start_relative_pos
-                    drag_position = vector2_new(math_clamp(position.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X), math_clamp(position.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y))
-                    drag_object.Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23)
-                end
-            end)
-
-            local inputended; inputended = library:connection(inputservice.InputEnded, function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    inputchanged:Disconnect()
-                    inputended:Disconnect()
-
-                    utility:tween(menu.objects.background, 'Position', udim2_offset(drag_position.X, drag_position.Y), 0.15, Enum.EasingStyle.Quad)
-                    utility:tween(menu.objects.drag_fade, 'Transparency', 0, 0.075)
-                    utility:tween(drag_object, 'Transparency', 0, 0.075).Completed:Wait()
-                    drag_object:Remove()
-                    menu.dragging = false
-
-                end
-            end)
-
-            menu.dragging = true
-            utility:tween(drag_object, 'Transparency', 1, 0.075)
-            utility:tween(menu.objects.drag_fade, 'Transparency', 0.2, 0.075).Completed:Wait()
         end)
 
-        return menu
-    end, {
+        local inputended; inputended = library:connection(inputservice.InputEnded, function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                inputchanged:Disconnect()
+                inputended:Disconnect()
 
-        set_open = function(self, bool, duration)
-            if bool == self.open then return end
+                utility:tween(menu.objects.background, 'Position', udim2_offset(drag_position.X, drag_position.Y), 0.15, Enum.EasingStyle.Quad)
+                utility:tween(menu.objects.drag_fade, 'Transparency', 0, 0.075)
+                utility:tween(drag_object, 'Transparency', 0, 0.075).Completed:Wait()
+                drag_object:Remove()
+                menu.dragging = false
 
-            duration = duration or 0
-
-            local objects = self.objects.background:GetDescendants()
-            table_insert(objects, self.objects.background)
-
-            for _,v in next, objects do
-                if v.Transparency ~= 0 then
-                    if bool then
-                        utility:tween(v, 'Transparency', self.visvalues[v] or 1, duration)
-                    else
-                        self.visvalues[v] = v.Transparency
-                        utility:tween(v, 'Transparency', 0.05, duration)
-                    end
-                end
             end
+        end)
 
-            task.spawn(function()
-                if not bool then
-                    task.wait(duration)
+        menu.dragging = true
+        utility:tween(drag_object, 'Transparency', 1, 0.075)
+        utility:tween(menu.objects.drag_fade, 'Transparency', 0.2, 0.075).Completed:Wait()
+    end)
+
+    return menu
+end, {
+
+    set_open = function(self, bool, duration)
+        if bool == self.open then return end
+
+        duration = duration or 0
+
+        local objects = self.objects.background:GetDescendants()
+        table_insert(objects, self.objects.background)
+
+        for _,v in next, objects do
+            if v.Transparency ~= 0 then
+                if bool then
+                    utility:tween(v, 'Transparency', self.visvalues[v] or 1, duration)
+                else
+                    self.visvalues[v] = v.Transparency
+                    utility:tween(v, 'Transparency', 0.05, duration)
                 end
-                if library.screengui then
-                    library.screengui.Enabled = bool
-                end
-                self.objects.background.Visible = bool
-                self.open = bool
-            end)
-        end,
-
-        tab = function(self, properties)
-            local tab = library:create('tab', properties, self.objects.tab_container)
-            tab.sections = {}
-            tab.order = properties.order or #self.tabs + 1
-            tab.parent = self
-
-            library:connection(tab.objects.background.MouseButton1Down, function()
-                if self.selected == tab then return end
-                self.selected = tab
-                self:refresh()
-            end)
-
-            if self.selected == nil then
-                self.selected = tab
-            end
-
-            table_insert(self.tabs, tab)
-            return tab
-        end,
-
-        refresh = function(self)
-            table_sort(self.tabs, function(a,b)
-                return a.order < b.order
-            end)
-
-            for i, tab in next, self.tabs do
-                local selected = tab == self.selected
-                tab.objects.background.Size     = udim2_new(1 / #self.tabs, i == #self.tabs and 0 or -1, 1, 0)
-                tab.objects.background.Position = udim2_new((i - 1) * (1 / #self.tabs), 0, 0, 0)
-                tab.objects.background.Theme    = {['Color'] = selected and 'Selected Tab' or 'Unselected Tab'}
-                tab.objects.text.Theme          = {['Color'] = selected and 'Accent' or 'Unselected Tab Text'}
-                tab.objects.gradient.Data       = selected and library.images.gradientn90 or library.images.gradientp90
-                tab:update_sections()
             end
         end
-    }, true)
+
+        task.spawn(function()
+            if not bool then
+                task.wait(duration)
+            end
+            if library.screengui then
+                library.screengui.Enabled = bool
+            end
+            self.objects.background.Visible = bool
+            self.open = bool
+        end)
+    end,
+
+    tab = function(self, properties)
+        local tab = library:create('tab', properties, self.objects.tab_container)
+        tab.sections = {}
+        tab.order = properties.order or #self.tabs + 1
+        tab.parent = self
+
+        library:connection(tab.objects.background.MouseButton1Down, function()
+            if self.selected == tab then return end
+            self.selected = tab
+            self:refresh()
+        end)
+
+        if self.selected == nil then
+            self.selected = tab
+        end
+
+        table_insert(self.tabs, tab)
+        return tab
+    end,
+
+    refresh = function(self)
+        table_sort(self.tabs, function(a,b)
+            return a.order < b.order
+        end)
+
+        for i, tab in next, self.tabs do
+            local selected = tab == self.selected
+            tab.objects.background.Size     = udim2_new(1 / #self.tabs, i == #self.tabs and 0 or -1, 1, 0)
+            tab.objects.background.Position = udim2_new((i - 1) * (1 / #self.tabs), 0, 0, 0)
+            tab.objects.background.Theme    = {['Color'] = selected and 'Selected Tab' or 'Unselected Tab'}
+            tab.objects.text.Theme          = {['Color'] = selected and 'Accent' or 'Unselected Tab Text'}
+            tab.objects.gradient.Data       = selected and library.images.gradientn90 or library.images.gradientp90
+            tab:update_sections()
+        end
+    end
+}, true)
+
 
     -- tab
     library:define('tab', function(meta, properties, container, parent)
