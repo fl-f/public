@@ -261,7 +261,7 @@ local library = {
     rainbows    = {},
     notifs      = {},
     debugmode   = false,
-    cheatname   = 'lol',
+    cheatname   = 'osa',
     gamename    = 'phantom forces',
     themes      = themes,
     theme       = themes.default,
@@ -2519,7 +2519,6 @@ do
             Transparency = 0,
             Parent = menu.objects.outline_outer_2
         })
-        print("文鍵盤/中文键盘")
         library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
             if menu.dragging then
                 return
@@ -2548,7 +2547,6 @@ do
                     inputchanged:Disconnect()
                     inputended:Disconnect()
         
-                    -- Final tween for smooth landing on release, if desired.
                     utility:tween(menu.objects.background, 'Position', menu.objects.background.Position, 0.15, Enum.EasingStyle.Quad)
                     menu.dragging = false
                 end
@@ -2774,7 +2772,6 @@ do
 
     -- option
     library:define('option', function(default_properties, properties, parent, id)
-        print(id, properties.flag)
 
         local option = {}
         option._type    = 'option'
@@ -3558,26 +3555,26 @@ library.dropdown.objects.border_inner = library:create('outline', library.dropdo
 library.dropdown.objects.border_outer = library:create('outline', library.dropdown.objects.border_inner, {Theme = {['Color'] = 'Border'}})
 
 function library:create_settings_tab(menu)
-    local tab = menu:tab({text = 'settings', order = 999})
-    local settings_main = tab:section({text = 'main', side = 1})
-    local settings_config = tab:section({text = 'config', side = 2})
+    local tab = menu:tab({text = 'Settings', order = 999})
+    local settings_main = tab:section({text = 'Main', side = 1})
+    local settings_config = tab:section({text = 'Config', side = 2})
 
-    settings_main:keybind({text = 'open / close', flag = 'menubind', default = Enum.KeyCode.End, callback = function(bool)
+    settings_main:keybind({text = 'Open / Close', flag = 'menubind', default = Enum.KeyCode.RightShift, callback = function(bool)
         library.cursor[1].Visible = bool
         library.cursor[2].Visible = bool
         menu:set_open(bool, 0.1)
     end})
 
-    settings_main:colorpicker({text = 'accent', flag = 'theme_accent', default = library.themes.default.Accent, callback = function(color)
+    settings_main:colorpicker({text = 'Accent', flag = 'theme_accent', default = library.themes.default.Accent, callback = function(color)
         library.theme.Accent = color
         library:update_theme()
     end})
 
-    settings_main:toggle({text = 'keybind indicator', flag = 'keybind_indicator_enabled', callback = function(bool)
+    settings_main:toggle({text = 'Keybind indicator', flag = 'keybind_indicator_enabled', callback = function(bool)
         library.keybind_indicator:set_enabled(bool)
     end})
 
-    settings_main:button({text = 'join discord', callback = function()
+    settings_main:button({text = 'Join Discord', callback = function()
         local res = request({
             Url = 'http://127.0.0.1:6463/rpc?v=1',
             Method = 'POST',
@@ -3588,7 +3585,7 @@ function library:create_settings_tab(menu)
             Body = http:JSONEncode({
                 cmd = 'INVITE_BROWSER',
                 nonce = http:GenerateGUID(false),
-                args = {code = '6y7NTn6KkC'}
+                args = {code = 'zBR6FxDR8P'}
             })
         })
         if res.Success then
@@ -3596,19 +3593,19 @@ function library:create_settings_tab(menu)
         end
     end})
 
-    settings_main:button({text = 'copy javascript invite', callback = function()
+    settings_main:button({text = 'Copy Javascript Invite', callback = function()
         setclipboard(`game:GetService("TeleportService"):TeleportToPlaceInstance({game.PlaceId}, {game.JobId}, game.Players.LocalPlayer)`)
     end})
 
-    settings_main:button({text = 'rejoin', confirm = true, callback = function()
+    settings_main:button({text = 'Rejoin', confirm = true, callback = function()
         game:GetService('TeleportService'):Teleport(game.PlaceId, game.Players.LocalPlayer)
     end})
 
 
-    settings_config:dropdown({text = 'config', flag = 'configs_selected'})
-    settings_config:textbox({text = 'config name', flag = 'configs_input'})
+    settings_config:dropdown({text = 'Config', flag = 'configs_selected'})
+    settings_config:textbox({text = 'Config Name', flag = 'configs_input'})
 
-    settings_config:button({text = 'create', confirm = true, callback = function()
+    settings_config:button({text = 'Create', confirm = true, callback = function()
         xpcall(function()
             library:save_config(flags.configs_input, true)
             library:notification(("successfully created config '%s'"):format(flags.configs_input), 5, color3_new(0.35, 1, 0.35))
@@ -3617,7 +3614,7 @@ function library:create_settings_tab(menu)
         end)
     end})
 
-    settings_config:button({text = 'save', confirm = true, callback = function()
+    settings_config:button({text = 'Save', confirm = true, callback = function()
         xpcall(function()
             library:save_config(flags.configs_selected)
             library:notification(("successfully saved config '%s'"):format(flags.configs_selected), 5, color3_new(0.35, 1, 0.35))
@@ -3626,7 +3623,7 @@ function library:create_settings_tab(menu)
         end)
     end})
 
-    settings_config:button({text = 'load', confirm = true, callback = function()
+    settings_config:button({text = 'Load', confirm = true, callback = function()
         xpcall(function()
             library:load_config(flags.configs_selected)
             library:notification(("successfully loaded config '%s'"):format(flags.configs_selected), 5, color3_new(0.35, 1, 0.35))
