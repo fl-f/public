@@ -2519,53 +2519,59 @@ do
             Transparency = 0,
             Parent = menu.objects.outline_outer_2
         })
-
+        print("yeah")
         library:connection(menu.objects.drag_interaction.MouseButton1Down, function()
             if menu.dragging then
                 return
             end
-
+        
             local drag_position_start = menu.objects.background.AbsolutePosition
             local mouse_position_start = inputservice:GetMouseLocation()
             local start_relative_pos = mouse_position_start - drag_position_start
-            local drag_position = mouse_position_start - start_relative_pos
-
+        
             local drag_object = library:create('rect', {
                 Size = udim2_offset(menu.objects.outline_outer_2.AbsoluteSize.X, menu.objects.outline_outer_2.AbsoluteSize.Y),
-                Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23),
+                Position = udim2_offset(drag_position_start.X - 9, drag_position_start.Y - 23),
                 Color = color3_new(1,1,1),
                 Filled = false,
                 Thickness = 1,
                 Transparency = 0,
                 ZIndex = 100,
             })
-
+        
+            menu.dragging = true
+        
             local inputchanged; inputchanged = library:connection(inputservice.InputChanged, function(input)
                 if input.UserInputType == Enum.UserInputType.MouseMovement then
-                    local position = inputservice:GetMouseLocation() - start_relative_pos
-                    drag_position = vector2_new(math_clamp(position.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X), math_clamp(position.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y))
-                    drag_object.Position = udim2_offset(drag_position.X - 9, drag_position.Y - 23)
+                    local newMousePos = inputservice:GetMouseLocation()
+                    local newDragPosition = newMousePos - start_relative_pos
+                    newDragPosition = vector2_new(
+                        math_clamp(newDragPosition.X, 9, (camera.ViewportSize.X + 9) - menu.objects.outline_outer_2.AbsoluteSize.X),
+                        math_clamp(newDragPosition.Y, 23, (camera.ViewportSize.Y + 23) - menu.objects.outline_outer_2.AbsoluteSize.Y)
+                    )
+                    -- Update drag outline position
+                    drag_object.Position = udim2_offset(newDragPosition.X - 9, newDragPosition.Y - 23)
+                    -- Update actual menu position for visual feedback
+                    menu.objects.background.Position = udim2_offset(newDragPosition.X, newDragPosition.Y)
                 end
             end)
-
+        
             local inputended; inputended = library:connection(inputservice.InputEnded, function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     inputchanged:Disconnect()
                     inputended:Disconnect()
-
-                    utility:tween(menu.objects.background, 'Position', udim2_offset(drag_position.X, drag_position.Y), 0.15, Enum.EasingStyle.Quad)
+        
                     utility:tween(menu.objects.drag_fade, 'Transparency', 0, 0.075)
                     utility:tween(drag_object, 'Transparency', 0, 0.075).Completed:Wait()
                     drag_object:Remove()
                     menu.dragging = false
-
                 end
             end)
-
-            menu.dragging = true
+        
             utility:tween(drag_object, 'Transparency', 1, 0.075)
             utility:tween(menu.objects.drag_fade, 'Transparency', 0.2, 0.075).Completed:Wait()
         end)
+        
 
         return menu
     end, {
