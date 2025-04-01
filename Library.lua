@@ -357,6 +357,7 @@ do
         Enum.KeyCode.RightShift,
         Enum.KeyCode.LeftControl,
         Enum.KeyCode.RightControl,
+        Enum.KeyCode.LeftMeta,
         Enum.KeyCode.LeftAlt,
         Enum.KeyCode.RightAlt,
         Enum.KeyCode.LeftSuper,
@@ -509,7 +510,6 @@ do
     end
 
     function library:set_theme(theme)
-        print(theme)
         self.theme = self.themes[theme]
         self:update_theme()
     end
@@ -1533,7 +1533,7 @@ do
 
             if input.KeyCode == Enum.KeyCode.Backspace then
                 self:set_text(self.text:sub(0,-2))
-            elseif input.KeyCode == Enum.KeyCode.V and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) then
+            elseif input.KeyCode == Enum.KeyCode.V and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta) then
                 self:set_text(self.text .. utility:getclipboard(), true)
             elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Escape or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
                 self:release()
@@ -1674,7 +1674,7 @@ do
                     library.dropdown.objects.background.Visible = true
                     dropdown:update()
 
-                    if inputservice:IsKeyDown(Enum.KeyCode.LeftControl) then
+                    if inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta) then
 
                         local status_text = dropdown.objects.status_text
 
@@ -3372,7 +3372,7 @@ do
     library:connection(inputservice.InputBegan, function(input, processed)
         -- if processed then return end
 
-        if input.KeyCode == Enum.KeyCode.Equals and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) and not processed then
+        if input.KeyCode == Enum.KeyCode.Equals and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta) and not processed then
             game:GetService('TeleportService'):Teleport(game.PlaceId)
         end
 
@@ -3571,7 +3571,7 @@ function library:create_settings_tab(menu)
         library:update_theme()
     end})
 
-    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = {"Default", "Tokyo Night", "Nekocheat", "Fatality"}, callback = function(value)
+    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = {"Default", "Tokyo Night", "Nekocheat", "Fatality"}, selected = "Default", callback = function(value)
         if value ~= 'none' then
             library:set_theme(value)
         end
