@@ -1,4 +1,4 @@
-print("abc")
+print("0")
 --[[
     // -- Documentation -- \\
 
@@ -665,16 +665,27 @@ do
             textbox:GetPropertyChangedSignal('Text'):Wait()
             clipboard = textbox.Text
         end)
-
-        keypress(0x11)
-        keypress(0x56)
-        task.wait()
-        keyrelease(0x11)
-        keyrelease(0x56)
+    
+        local platform = inputservice:GetPlatform()
+        if platform == Enum.Platform.MacOS then
+            keypress(0x5B) -- Command/LeftMeta key for Mac
+            keypress(0x56) -- V key
+            task.wait()
+            keyrelease(0x5B)
+            keyrelease(0x56)
+        else
+            keypress(0x11) -- Control key for Windows
+            keypress(0x56) -- V key
+            task.wait()
+            keyrelease(0x11)
+            keyrelease(0x56)
+        end
+    
         repeat task.wait() until clipboard ~= nil
         textbox:Destroy()
         return clipboard
     end
+    
 
     function utility:convert_number_range(value: number, min_old: number, max_old: number, min_new: number, max_new: number)
         return (((value - min_old) * (max_new - min_new)) / (max_old - min_old)) + min_new
