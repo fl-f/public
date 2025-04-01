@@ -1,3 +1,4 @@
+print("abc")
 --[[
     // -- Documentation -- \\
 
@@ -356,6 +357,7 @@ do
         Enum.KeyCode.LeftShift,
         Enum.KeyCode.RightShift,
         Enum.KeyCode.LeftControl,
+        Enum.KeyCode.LeftMeta,
         Enum.KeyCode.RightControl,
         Enum.KeyCode.LeftAlt,
         Enum.KeyCode.RightAlt,
