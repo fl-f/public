@@ -1,3 +1,4 @@
+print("b")
 --[[
     // -- Documentation -- \\
 
@@ -652,6 +653,7 @@ do
 
     -- util
     function utility:getclipboard()
+        print("getclipboard")
         local clipboard
 
         local textbox = Instance.new('TextBox')
