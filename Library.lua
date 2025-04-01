@@ -205,6 +205,11 @@ local themes = {
     };
 }
 
+local ThemeList = {}
+for Theme, _ in pairs(themes) do
+    table.insert(ThemeList, Theme)
+end
+
 -- // variables
 
 -- globals
@@ -3570,6 +3575,10 @@ function library:create_settings_tab(menu)
         library:update_theme()
     end})
 
+    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = ThemeList, callback = function(value)
+        library:set_theme(value)
+    end})
+
     settings_main:toggle({text = 'Keybind indicator', flag = 'keybind_indicator_enabled', callback = function(bool)
         library.keybind_indicator:set_enabled(bool)
     end})
@@ -3601,6 +3610,9 @@ function library:create_settings_tab(menu)
         game:GetService('TeleportService'):Teleport(game.PlaceId, game.Players.LocalPlayer)
     end})
 
+    settings_main:button({text = 'Unload', confirm = true, callback = function()
+        library:unload()
+    end})
 
     settings_config:dropdown({text = 'Config', flag = 'configs_selected'})
     settings_config:textbox({text = 'Config Name', flag = 'configs_input'})
