@@ -1,4 +1,3 @@
-print("0")
 --[[
     // -- Documentation -- \\
 
@@ -667,7 +666,8 @@ do
         end)
     
         local platform = inputservice:GetPlatform()
-        if platform == Enum.Platform.MacOS then
+        print("platform ", platform)
+        if platform == Enum.Platform.OSX then
             keypress(0x5B) -- Command/LeftMeta key for Mac
             keypress(0x56) -- V key
             task.wait()
