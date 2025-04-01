@@ -264,7 +264,7 @@ local library = {
     cheatname   = 'osa',
     gamename    = 'universal',
     themes      = themes,
-    theme       = themes.default,
+    theme       = themes.Default,
     signal      = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/Quenty/NevermoreEngine/23c4c96158a582b30f13d58ebb8b9f8139aca130/src/signal/src/Shared/Signal.lua'))(),
     stat        = {fps = 0, ping = 0},
     drawings    = {
@@ -3566,12 +3566,16 @@ function library:create_settings_tab(menu)
         menu:set_open(bool, 0.1)
     end})
 
-    settings_main:colorpicker({text = 'Accent', flag = 'theme_accent', default = library.themes.default.Accent, callback = function(color)
+    settings_main:colorpicker({text = 'Accent', flag = 'theme_accent', default = library.themes.Default.Accent, callback = function(color)
         library.theme.Accent = color
         library:update_theme()
     end})
 
-    
+    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = {"Default", "Tokyo Night", "Nekocheat", "Fatality"}, callback = function(value)
+        if value ~= 'none' then
+            library:set_theme(value)
+        end
+    end})
 
     settings_main:toggle({text = 'Keybind indicator', flag = 'keybind_indicator_enabled', callback = function(bool)
         library.keybind_indicator:set_enabled(bool)
