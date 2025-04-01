@@ -3571,11 +3571,7 @@ function library:create_settings_tab(menu)
         library:update_theme()
     end})
 
-    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = {"Default", "Tokyo Night", "Nekocheat", "Fatality"}, callback = function(value)
-        if value ~= 'none' then
-            library:set_theme(value)
-        end
-    end})
+    
 
     settings_main:toggle({text = 'Keybind indicator', flag = 'keybind_indicator_enabled', callback = function(bool)
         library.keybind_indicator:set_enabled(bool)
