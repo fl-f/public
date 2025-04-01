@@ -207,7 +207,7 @@ local themes = {
 
 local ThemeList = {}
 for Theme, _ in pairs(themes) do
-    table.insert(ThemeList, Theme)
+    table.insert(ThemeList, 1, Theme)
 end
 
 -- // variables
