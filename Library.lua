@@ -351,7 +351,7 @@ do
         [Enum.KeyCode.Nine] = {'9', '('},
         [Enum.KeyCode.Zero] = {'0', ')'},
     }
-    print("vvv")
+    
     library.blacklisted_keys = {
         Enum.KeyCode.LeftShift,
         Enum.KeyCode.RightShift,
@@ -2081,6 +2081,7 @@ do
         end
 
     end
+end
 end
 
 -- // classes
