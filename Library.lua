@@ -1533,7 +1533,7 @@ do
 
             if input.KeyCode == Enum.KeyCode.Backspace then
                 self:set_text(self.text:sub(0,-2))
-            elseif input.KeyCode == Enum.KeyCode.V and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta) then
+            if input.KeyCode == Enum.KeyCode.V and (inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta)) then
                 self:set_text(self.text .. utility:getclipboard(), true)
             elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Escape or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
                 self:release()
@@ -3372,7 +3372,7 @@ do
     library:connection(inputservice.InputBegan, function(input, processed)
         -- if processed then return end
 
-        if input.KeyCode == Enum.KeyCode.Equals and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta) and not processed then
+        if input.KeyCode == Enum.KeyCode.Equals and (inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta)) and not processed then
             game:GetService('TeleportService'):Teleport(game.PlaceId)
         end
 
