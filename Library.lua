@@ -357,7 +357,6 @@ do
         Enum.KeyCode.RightShift,
         Enum.KeyCode.LeftControl,
         Enum.KeyCode.RightControl,
-        Enum.KeyCode.LeftMeta,
         Enum.KeyCode.LeftAlt,
         Enum.KeyCode.RightAlt,
         Enum.KeyCode.LeftSuper,
@@ -1533,7 +1532,7 @@ do
 
             if input.KeyCode == Enum.KeyCode.Backspace then
                 self:set_text(self.text:sub(0,-2))
-            if input.KeyCode == Enum.KeyCode.V and (inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta)) then
+            elseif input.KeyCode == Enum.KeyCode.V and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) then
                 self:set_text(self.text .. utility:getclipboard(), true)
             elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Escape or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
                 self:release()
@@ -1674,7 +1673,7 @@ do
                     library.dropdown.objects.background.Visible = true
                     dropdown:update()
 
-                    if inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta) then
+                    if inputservice:IsKeyDown(Enum.KeyCode.LeftControl) then
 
                         local status_text = dropdown.objects.status_text
 
@@ -2081,7 +2080,6 @@ do
         end
 
     end
-end
 end
 
 -- // classes
@@ -3373,7 +3371,7 @@ do
     library:connection(inputservice.InputBegan, function(input, processed)
         -- if processed then return end
 
-        if input.KeyCode == Enum.KeyCode.Equals and (inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta)) and not processed then
+        if input.KeyCode == Enum.KeyCode.Equals and inputservice:IsKeyDown(Enum.KeyCode.LeftControl) and not processed then
             game:GetService('TeleportService'):Teleport(game.PlaceId)
         end
 
