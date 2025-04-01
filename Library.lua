@@ -509,6 +509,7 @@ do
     end
 
     function library:set_theme(theme)
+        print(theme)
         self.theme = self.themes[theme]
         self:update_theme()
     end
