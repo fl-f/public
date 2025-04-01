@@ -111,7 +111,7 @@ if library ~= nil then
 end
 
 local themes = {
-    ['default'] = {
+    ['Default'] = {
         ['Accent']              = Color3.fromRGB(77, 160, 255),
         ['Background']          = Color3.fromRGB(15,15,20),
         ['Border']              = Color3.fromRGB(0,0,0),
@@ -134,7 +134,7 @@ local themes = {
         ["Risky Text"]          = Color3.fromRGB(175, 21, 21),
         ["Risky Text Enabled"]  = Color3.fromRGB(255, 41, 41),
     };
-    ['tokyo night'] = {
+    ['Tokyo Night'] = {
         ['Accent']                    = Color3.fromRGB(103,89,179);
         ['Background']                = Color3.fromRGB(22,22,31);
         ['Border']                    = Color3.fromRGB(0,0,0);
@@ -157,7 +157,7 @@ local themes = {
         ["Risky Text"]                = Color3.fromRGB(175, 21, 21);
         ["Risky Text Enabled"]        = Color3.fromRGB(255, 41, 41);
     };
-    ['nekocheat'] = {
+    ['Nekocheat'] = {
         ["Accent"]                    = Color3.fromRGB(226, 30, 112);
         ["Background"]                = Color3.fromRGB(18,18,18);
         ["Border"]                    = Color3.fromRGB(0,0,0);
@@ -180,7 +180,7 @@ local themes = {
         ["Risky Text"]                = Color3.fromRGB(175, 21, 21);
         ["Risky Text Enabled"]        = Color3.fromRGB(255, 41, 41);
     };
-    ['fatality'] = {
+    ['Fatality'] = {
         ['Accent']                    = Color3.fromRGB(197,7,83);
         ['Background']                = Color3.fromRGB(25,19,53);
         ['Border']                    = Color3.fromRGB(0,0,0);
@@ -204,11 +204,6 @@ local themes = {
         ["Risky Text Enabled"]        = Color3.fromRGB(255, 41, 41);
     };
 }
-
-local ThemeList = {}
-for Theme, _ in pairs(themes) do
-    table.insert(ThemeList, 1, Theme)
-end
 
 -- // variables
 
@@ -3575,8 +3570,10 @@ function library:create_settings_tab(menu)
         library:update_theme()
     end})
 
-    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = ThemeList, callback = function(value)
-        library:set_theme(value)
+    settings_main:dropdown({text = 'Theme', flag = 'theme_selected', values = {"Default", "Tokyo Night", "Nekocheat", "Fatality"}, callback = function(value)
+        if value ~= 'none' then
+            library:set_theme(value)
+        end
     end})
 
     settings_main:toggle({text = 'Keybind indicator', flag = 'keybind_indicator_enabled', callback = function(bool)
