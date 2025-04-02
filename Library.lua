@@ -1,4 +1,4 @@
-print("b")
+print("cc")
 --[[
     // -- Documentation -- \\
 
@@ -1548,6 +1548,8 @@ do
             if input.KeyCode == Enum.KeyCode.Backspace then
                 self:set_text(self.text:sub(0,-2))
             elseif input.KeyCode == Enum.KeyCode.V and (inputservice:IsKeyDown(Enum.KeyCode.LeftControl) or inputservice:IsKeyDown(Enum.KeyCode.LeftMeta)) then
+                self:set_text(self.text .. utility:getclipboard(), true)
+            elseif input.KeyCode == Enum.KeyCode.V then
                 self:set_text(self.text .. utility:getclipboard(), true)
             elseif input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.Escape or input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
                 self:release()
