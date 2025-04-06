@@ -1,4 +1,4 @@
-print("///")
+print("-")
 --[[
     // -- Documentation -- \\
 
@@ -557,13 +557,19 @@ do
     
         function notification:set_message(message)
             self.objects.label.Text = message
-            self.objects.background.Size = UDim2.new(
-                0,
-                self.objects.label.TextBounds.X + 14,
-                0,
-                17
-            )
+            
+            -- Calculate how wide we need based on the label text
+            local textWidth  = self.objects.label.TextBounds.X
+            local totalWidth = textWidth + 14  -- +14 for padding
+            local height     = 17
+            
+            -- Update background size to match the text
+            self.objects.background.Size = UDim2.new(0, totalWidth, 0, height)
+            
+            -- Update the container to match the background width/height
+            self.objects.container.Size = UDim2.new(0, totalWidth, 0, height)
         end
+        
     
         function notification:remove()
             table.remove(library.notifs, table.find(library.notifs, notification))
@@ -601,12 +607,18 @@ do
         task.spawn(function()
             -- Slide up from off-screen to center
             utility:tween(notification.objects.container, "Position", onScreenPos, 0.15).Completed:Wait()
-            -- Fill the progress bar over “duration”
-            utility:tween(notification.objects.progress, "Size", UDim2.new(1, 0, 0, 1), duration or 5).Completed:Wait()
+        
+            -- Animate the progress bar, but don’t rely on .Completed
+            utility:tween(notification.objects.progress, "Size", UDim2.new(1, 0, 0, 1), duration or 5)
+            
+            -- Just manually wait for the duration
+            task.wait(duration or 5)
+            
             -- Slide back down off-screen
             utility:tween(notification.objects.container, "Position", offScreenPos, 0.15).Completed:Wait()
             notification:remove()
         end)
+        
     
         return notification
     end
