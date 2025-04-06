@@ -1,4 +1,4 @@
-print("/")
+print("//")
 --[[
     // -- Documentation -- \\
 
@@ -579,8 +579,9 @@ do
         ------------------------------------------------------------------------
         -- Move from “just off screen to the right” => “fully on screen to the right”
         ------------------------------------------------------------------------
-        local onScreenPos  = UDim2.new(1, -210, 0, 100 + (index * 25))
-        local offScreenPos = UDim2.new(1, 5,    0, 100 + (index * 25))
+        local onScreenPos  = UDim2.new(0.8, 0, 0,  100 + (index * 25))
+        local offScreenPos = UDim2.new(1.0, 0, 0,  100 + (index * 25))
+
     
         notification.objects.container.Position = offScreenPos
         notification:set_message(message)
