@@ -1,4 +1,4 @@
-print("-")
+print("--")
 --[[
     // -- Documentation -- \\
 
@@ -605,19 +605,22 @@ do
         library:update_notifications()
     
         task.spawn(function()
-            -- Slide up from off-screen to center
-            utility:tween(notification.objects.container, "Position", onScreenPos, 0.15).Completed:Wait()
+            -- 1) Slide up from off-screen
+            utility:tween(notification.objects.container, "Position", onScreenPos, 0.15)
+            task.wait(0.15)
         
-            -- Animate the progress bar, but don’t rely on .Completed
+            -- 2) Animate the progress bar
             utility:tween(notification.objects.progress, "Size", UDim2.new(1, 0, 0, 1), duration or 5)
-            
-            -- Just manually wait for the duration
             task.wait(duration or 5)
-            
-            -- Slide back down off-screen
-            utility:tween(notification.objects.container, "Position", offScreenPos, 0.15).Completed:Wait()
+        
+            -- 3) Slide back down off-screen
+            utility:tween(notification.objects.container, "Position", offScreenPos, 0.15)
+            task.wait(0.15)
+        
+            -- 4) Remove notification
             notification:remove()
         end)
+        
         
     
         return notification
