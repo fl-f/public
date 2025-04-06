@@ -1,4 +1,4 @@
-print("abgfy")
+print("/")
 --[[
     // -- Documentation -- \\
 
@@ -529,52 +529,79 @@ do
     end
 
     function library:update_notifications()
-        for i,v in next, self.notifs do
-            utility:tween(v.objects.container, 'Position', udim2_new(0,5,0,100 + (i * 25)), 0.05)
+        for i, v in next, self.notifs do
+            -- Tween the container to a position near the top-right edge,
+            -- with each subsequent notification slightly lower.
+            utility:tween(
+                v.objects.container,
+                "Position",
+                UDim2.new(
+                    1,  -- x scale = 1: the right edge of the screen
+                    -210,  -- x offset = -210, so it's 210px INSIDE the right edge
+                    0,  -- y scale = 0: from the top
+                    100 + (i * 25)  -- y offset
+                ),
+                0.05
+            )
         end
     end
-
+    
     function library:notification(message, duration, color)
         local notification = {}
-        notification.objects = library:create('notification')
+        notification.objects = library:create("notification")
+    
         if color then
-            notification.objects.accent.Theme = {}
-            notification.objects.accent.Color = color
+            notification.objects.accent.Theme   = {}
+            notification.objects.accent.Color   = color
             notification.objects.progress.Theme = {}
             notification.objects.progress.Color = color
         end
+    
         function notification:set_message(message)
             self.objects.label.Text = message
-            self.objects.background.Size = udim2_new(0, self.objects.label.TextBounds.X + 14, 0, 17)
+            self.objects.background.Size = UDim2.new(
+                0,
+                self.objects.label.TextBounds.X + 14,
+                0,
+                17
+            )
         end
+    
         function notification:remove()
-            table_remove(library.notifs, table_find(library.notifs, notification))
+            table.remove(library.notifs, table.find(library.notifs, notification))
             library:update_notifications()
             self.objects.container:Remove()
         end
     
-        table_insert(library.notifs, notification)
-        local index = table_find(library.notifs, notification)
-        
-        local onScreenPos = udim2_new(0, 5, 0, 100 + (index * 25))
-        local offScreenPos = udim2_new(1, 5, 0, 100 + (index * 25))
-        
+        table.insert(library.notifs, notification)
+        local index = table.find(library.notifs, notification)
+    
+        ------------------------------------------------------------------------
+        -- Move from “just off screen to the right” => “fully on screen to the right”
+        ------------------------------------------------------------------------
+        local onScreenPos  = UDim2.new(1, -210, 0, 100 + (index * 25))
+        local offScreenPos = UDim2.new(1, 5,    0, 100 + (index * 25))
+    
         notification.objects.container.Position = offScreenPos
-        
         notification:set_message(message)
-        
         notification.objects.container.Visible = true
         
+        -- reflow other notifs
         library:update_notifications()
-        
+    
         task.spawn(function()
-            utility:tween(notification.objects.container, 'Position', onScreenPos, 0.15).Completed:Wait()
-            utility:tween(notification.objects.progress, 'Size', udim2_new(1, 0, 0, 1), duration or 5).Completed:Wait()
-            utility:tween(notification.objects.container, 'Position', offScreenPos, 0.15).Completed:Wait()
+            -- Slide from off-screen -> on-screen
+            utility:tween(notification.objects.container, "Position", onScreenPos, 0.15).Completed:Wait()
+            -- Fill the progress bar over “duration”
+            utility:tween(notification.objects.progress, "Size", UDim2.new(1, 0, 0, 1), duration or 5).Completed:Wait()
+            -- Slide back off screen
+            utility:tween(notification.objects.container, "Position", offScreenPos, 0.15).Completed:Wait()
             notification:remove()
         end)
+    
         return notification
     end
+    
 
     -- configs
     function library:load_config(config)
@@ -3576,7 +3603,7 @@ function library:create_settings_tab(menu)
     local settings_main = tab:section({text = 'Main', side = 1})
     local settings_config = tab:section({text = 'Config', side = 2})
 
-    settings_main:keybind({text = 'Open / Close', flag = 'menubind', default = Enum.KeyCode.RightShift, callback = function(bool)
+    settings_main:keybind({text = 'Open / Close', flag = 'menubind', default = Enum.KeyCode.LeftShift, callback = function(bool)
         library.cursor[1].Visible = bool
         library.cursor[2].Visible = bool
         menu:set_open(bool, 0.1)
