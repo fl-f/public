@@ -1,4 +1,4 @@
-print("cc")
+print("abgfy")
 --[[
     // -- Documentation -- \\
 
@@ -670,11 +670,11 @@ do
         local platform = inputservice:GetPlatform()
         print("platform ", platform)
         if platform == Enum.Platform.OSX then
-            keypress(0x5B) -- Command/LeftMeta key for Mac
-            keypress(0x56) -- V key
+            keypress(0x37) -- Command/LeftMeta key for Mac
+            keypress(0x09) -- V key
             task.wait()
-            keyrelease(0x5B)
-            keyrelease(0x56)
+            keyrelease(0x37)
+            keyrelease(0x09)
         else
             keypress(0x11) -- Control key for Windows
             keypress(0x56) -- V key
