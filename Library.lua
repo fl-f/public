@@ -1,4 +1,4 @@
-print("//")
+print("///")
 --[[
     // -- Documentation -- \\
 
@@ -530,16 +530,14 @@ do
 
     function library:update_notifications()
         for i, v in next, self.notifs do
-            -- Tween the container to a position near the top-right edge,
-            -- with each subsequent notification slightly lower.
             utility:tween(
                 v.objects.container,
                 "Position",
                 UDim2.new(
-                    1,  -- x scale = 1: the right edge of the screen
-                    -210,  -- x offset = -210, so it's 210px INSIDE the right edge
-                    0,  -- y scale = 0: from the top
-                    100 + (i * 25)  -- y offset
+                    0.5,  -- Center horizontally
+                    -105, -- Move left by half the notification’s width (assuming ~210px wide)
+                    0.5,  -- Center vertically
+                    (i * 25) - 100  -- Offsets each notification so they stack
                 ),
                 0.05
             )
@@ -577,31 +575,42 @@ do
         local index = table.find(library.notifs, notification)
     
         ------------------------------------------------------------------------
-        -- Move from “just off screen to the right” => “fully on screen to the right”
+        -- Make on-screen/off-screen positions center-based
         ------------------------------------------------------------------------
-        local onScreenPos  = UDim2.new(0.8, 0, 0,  100 + (index * 25))
-        local offScreenPos = UDim2.new(1.0, 0, 0,  100 + (index * 25))
-
+        local onScreenPos  = UDim2.new(
+            0.5, 
+            -105, 
+            0.5, 
+            (index * 25) - 100
+        )
+        -- Slide it in from below (Y=1 means off the bottom of the screen):
+        local offScreenPos = UDim2.new(
+            0.5, 
+            -105, 
+            1.0, 
+            (index * 25) - 100
+        )
     
         notification.objects.container.Position = offScreenPos
         notification:set_message(message)
         notification.objects.container.Visible = true
-        
-        -- reflow other notifs
+    
+        -- Reflow other notifs
         library:update_notifications()
     
         task.spawn(function()
-            -- Slide from off-screen -> on-screen
+            -- Slide up from off-screen to center
             utility:tween(notification.objects.container, "Position", onScreenPos, 0.15).Completed:Wait()
             -- Fill the progress bar over “duration”
             utility:tween(notification.objects.progress, "Size", UDim2.new(1, 0, 0, 1), duration or 5).Completed:Wait()
-            -- Slide back off screen
+            -- Slide back down off-screen
             utility:tween(notification.objects.container, "Position", offScreenPos, 0.15).Completed:Wait()
             notification:remove()
         end)
     
         return notification
     end
+    
     
 
     -- configs
