@@ -1,6 +1,6 @@
 local ESP = {
     Enabled     = true,
-    MaxDistance = 500,
+    MaxDistance = 200,
     ScreenGui   = nil,
     _boxes      = {},
 }
@@ -33,13 +33,10 @@ end
 function ESP:AddObject(model, opts)
     opts = opts or {}
     local showDist = opts.Distance or false
-    
+
     if self._boxes[model] then
-        if self._boxes[model].Distance ~= showDist then
-            self:RemoveObject(model)
-        else
-            return self._boxes[model]
-        end
+        self._boxes[model].Distance = showDist
+        return self._boxes[model]
     end
 
     self:Initialize()
@@ -51,30 +48,27 @@ function ESP:AddObject(model, opts)
     frame.Size                   = UDim2.new(0,0,0,0)
     frame.Position               = UDim2.new(0,0,0,0)
     frame.Parent                 = self.ScreenGui
-    frame.BorderSizePixel        = 0
 
     local stroke = Instance.new("UIStroke")
     stroke.Parent       = frame
-    stroke.Thickness    = 1.0
+    stroke.Thickness    = 1
     stroke.Transparency = 0
-    stroke.Color        = Color3.fromRGB(255, 255, 255)
 
-    local distLabel = nil
+    local distLabel
     if showDist then
         distLabel = Instance.new("TextLabel")
         distLabel.Name                   = model.Name .. "_ESPDistance"
-        distLabel.AnchorPoint            = Vector2.new(0.5, 0)
+        distLabel.AnchorPoint            = Vector2.new(0.5, 0.5)
         distLabel.BackgroundTransparency = 1
-        distLabel.Size                   = UDim2.new(0, 100, 0, 20)
-        distLabel.Position               = UDim2.new(0, 0, 0, 0)
-        distLabel.TextColor3             = Color3.fromRGB(255, 255, 255)
+        distLabel.Size                   = UDim2.new(0,100,0,20)
+        distLabel.Position               = UDim2.new(0,0,0,0)
+        distLabel.TextColor3             = Color3.fromRGB(255,255,255)
         distLabel.Font                   = Enum.Font.Code
-        distLabel.TextSize               = 12
+        distLabel.TextSize               = 11
         distLabel.TextStrokeTransparency = 0
-        distLabel.TextStrokeColor3       = Color3.fromRGB(0, 0, 0)
+        distLabel.TextStrokeColor3       = Color3.fromRGB(0,0,0)
         distLabel.RichText               = true
         distLabel.Text                   = ""
-        distLabel.ZIndex                 = 10
         distLabel.Parent                 = self.ScreenGui
     end
 
@@ -88,10 +82,8 @@ function ESP:AddObject(model, opts)
             return
         end
 
-        local root = model:FindFirstChild("HumanoidRootPart") 
-                    or model:FindFirstChild("Head")
-                    or model:FindFirstChildWhichIsA("BasePart")
-                    
+        local root = model:FindFirstChild("HumanoidRootPart")
+                     or model:FindFirstChildWhichIsA("BasePart")
         if not root then return end
 
         local screenPos, onScreen = Camera:WorldToScreenPoint(root.Position)
@@ -100,15 +92,16 @@ function ESP:AddObject(model, opts)
         if onScreen and dist <= self.MaxDistance and self.Enabled then
             local scale = (root.Size.Y * Camera.ViewportSize.Y) / (screenPos.Z * 2)
             local w, h = 3 * scale, 4.5 * scale
-            
+
             frame.Size     = UDim2.new(0, w, 0, h)
             frame.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y)
             frame.Visible  = true
+            frame.Rotation = tick() * 30
 
-            if distLabel and showDist then
-                distLabel.Text = tostring(math.floor(dist)) .. "m"
-                distLabel.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y + (h/2) + 10)
-                distLabel.Visible = true
+            if distLabel then
+                distLabel.Text     = tostring(math.floor(dist)) .. "m"
+                distLabel.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y + h/2 + 11)
+                distLabel.Visible  = true
             end
         else
             frame.Visible = false
