@@ -96,7 +96,6 @@ function ESP:AddObject(model, opts)
             frame.Size     = UDim2.new(0, w, 0, h)
             frame.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y)
             frame.Visible  = true
-            frame.Rotation = tick() * 30
 
             if distLabel then
                 distLabel.Text     = tostring(math.floor(dist)) .. "m"
