@@ -47,6 +47,7 @@ function ESP:AddObject(model, opts)
     frame.BackgroundTransparency = 1
     frame.Size                   = UDim2.new(0,0,0,0)
     frame.Position               = UDim2.new(0,0,0,0)
+    frame.Rotation               = 0
     frame.Parent                 = self.ScreenGui
 
     local stroke = Instance.new("UIStroke")
