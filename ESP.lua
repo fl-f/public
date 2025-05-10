@@ -55,7 +55,7 @@ function ESP:AddObject(model, opts)
 
     local stroke = Instance.new("UIStroke")
     stroke.Parent       = frame
-    stroke.Thickness    = 1.5
+    stroke.Thickness    = 1.0
     stroke.Transparency = 0
     stroke.Color        = Color3.fromRGB(255, 255, 255)
 
@@ -69,7 +69,7 @@ function ESP:AddObject(model, opts)
         distLabel.Position               = UDim2.new(0, 0, 0, 0)
         distLabel.TextColor3             = Color3.fromRGB(255, 255, 255)
         distLabel.Font                   = Enum.Font.Code
-        distLabel.TextSize               = 14
+        distLabel.TextSize               = 12
         distLabel.TextStrokeTransparency = 0
         distLabel.TextStrokeColor3       = Color3.fromRGB(0, 0, 0)
         distLabel.RichText               = true
@@ -98,8 +98,8 @@ function ESP:AddObject(model, opts)
         local dist = (Camera.CFrame.Position - root.Position).Magnitude
 
         if onScreen and dist <= self.MaxDistance and self.Enabled then
-            local scale = math.clamp((1 / (dist * 0.01)), 0.1, 1) * 100
-            local w, h = scale * 0.6, scale * 1.2
+            local scale = (root.Size.Y * Camera.ViewportSize.Y) / (screenPos.Z * 2)
+            local w, h = 3 * scale, 4.5 * scale
             
             frame.Size     = UDim2.new(0, w, 0, h)
             frame.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y)
@@ -107,7 +107,7 @@ function ESP:AddObject(model, opts)
 
             if distLabel and showDist then
                 distLabel.Text = tostring(math.floor(dist)) .. "m"
-                distLabel.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y + (h/2) + 5)
+                distLabel.Position = UDim2.new(0, screenPos.X, 0, screenPos.Y + (h/2) + 10)
                 distLabel.Visible = true
             end
         else
